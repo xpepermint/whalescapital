@@ -1,0 +1,24 @@
+{
+  "name": "whales",
+  "version": "0.1.0",
+  "description": "Enables users to invest into ICO project as a whale.",
+  "private": true,
+  "main": "truffle.js",
+  "directories": {
+    "contracts": "contracts",
+    "migrations": "migrations",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "truffle test",
+    "testrpc": "testrpc"
+  },
+  "author": "Xpepermint",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "ethereumjs-testrpc": "^4.1.3",
+    "truffle": "^3.4.11",
+    "zeppelin-solidity": "^1.3.0"
+  }
+}
