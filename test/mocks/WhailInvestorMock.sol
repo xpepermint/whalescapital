@@ -8,4 +8,12 @@ contract WhailInvestorMock is WhailInvestor {
     depositsHardCap = _val;
   }
 
+  function mockSeller(address _addr) external {
+    seller = _addr;
+  }
+
+  function mockFeeRatio(uint8[2] _ratio) external {
+    feeRatio = _ratio;
+  }
+
 }

@@ -23,3 +23,15 @@ Run run automatic tests. It's advised to install the `nodemon` package globally 
 ```
 $ nodemon --exec npm test
 ```
+
+## Contracts
+
+### WhailInvestor
+
+* Run `setSeller()` to set seller's address.
+* Run `setFee()` to set seller's address.
+
+* Accepts deposits immediately after the contract is deployed.
+* Run `cancel()` to enable withdrawals.
+* Run `close()` to stop accepting deposits.
+* Run `invest()` to send funds to seller's address.
