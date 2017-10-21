@@ -1,5 +1,7 @@
 pragma solidity ^0.4.13;
 
+import "../node_modules/zeppelin-solidity/contracts/token/ERC20Basic.sol";
+
 /**
  * Smart contract allows fror investing into ICOs.
  */
@@ -39,6 +41,11 @@ contract WhailInvestor {
    * Seller's address.
    */
   address public seller;
+
+  /**
+   * ERC20 token address.
+   */
+  ERC20Basic public token;
 
   /**
    * Ratio defining a fee amount that stays on the contract. Because floats are
@@ -115,7 +122,19 @@ contract WhailInvestor {
    * Transfers tokens to participant.
    */
   function claimTokens() internal {
-    // TODO
+    require(msg.value == 0);
+    require(deposits[msg.sender] > 0);
+
+    uint256 tokenBalance = token.balanceOf(address(this));
+    require(tokenBalance > 0);
+
+    uint256 claimAmount = tokenBalance * deposits[msg.sender] / totalDepositsAmount;
+    require(claimAmount > 0);
+
+    totalDepositsAmount -= deposits[msg.sender];
+    deposits[msg.sender] = 0;
+
+    token.transfer(msg.sender, claimAmount);
   }
 
   /**
