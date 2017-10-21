@@ -3,16 +3,22 @@ pragma solidity ^0.4.13;
 contract WhailInvestor {
 
   /**
+   * Current contract stage.
+   */
+  address owner;
+
+  /**
    * Contract stages.
    */
   enum Stages {
-    AcceptingDeposits
+    Opened,
+    Canceled
   }
 
   /**
    * Current contract stage.
    */
-  Stages public stage = Stages.AcceptingDeposits;
+  Stages public stage = Stages.Opened;
 
   /**
    * Depesit amounts per address.
@@ -25,27 +31,59 @@ contract WhailInvestor {
   uint256 public totalDepositsAmount = 0;
 
   /**
-   * Maximum allowed total deposits amount.
+   * Maximum allowed total deposits amount (0 = unlimited).
    */
-  uint256 public depositsHardCap = 1000;
+  uint256 public depositsHardCap = 0;
+
+  /**
+   * Contract constructor.
+   */
+  function WhailInvestor() {
+    owner = msg.sender;
+  }
+
+  /**
+   * Stops accepting deposits and enables withdrawals.
+   */
+  function cancel() external {
+    require(msg.sender == owner);
+    stage = Stages.Canceled;
+  }
 
   /**
    * Handles a deposit from ethereum wallets.
    */
-  function acceptDepositOf(address _from, uint _amount) internal {
-    require(_amount > 0);
-    require(totalDepositsAmount + _amount <= depositsHardCap);
+  function acceptDeposit() internal {
+    require(msg.value > 0);
+    require(totalDepositsAmount + msg.value <= depositsHardCap || depositsHardCap == 0);
 
-    totalDepositsAmount += _amount;
-    deposits[_from] += _amount;
+    totalDepositsAmount += msg.value;
+    deposits[msg.sender] += msg.value;
   }
 
   /**
-   * Accepts deposits, withdraws deposits or transfer tokens.
+   * Makes a refund for the provided address.
+   */
+  function withdrawDeposit() internal {
+    require(msg.value == 0);
+    require(deposits[msg.sender] > 0);
+
+    uint256 amount = deposits[msg.sender];
+
+    totalDepositsAmount -= amount;
+    deposits[msg.sender] -= amount;
+
+    msg.sender.transfer(amount);
+  }
+
+  /**
+   * Accepts deposits, withdraws deposits or transfers tokens.
    */
   function() payable {
-    if (stage == Stages.AcceptingDeposits) {
-      acceptDepositOf(msg.sender, msg.value);
+    if (stage == Stages.Opened) {
+      acceptDeposit();
+    } else if (stage == Stages.Canceled) {
+      withdrawDeposit();
     }
   }
 
