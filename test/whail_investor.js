@@ -137,4 +137,56 @@ contract('WhailInvestor', (accounts) => {
 
   });
 
+  describe('#close()', () => {
+
+    it("sets stage", async () => {
+      const contract = await WhailInvestorMock.new();
+      await contract.close({ from: owner });
+
+      const stage = await contract.stage.call();
+
+      assert.equal(stage.toNumber(), 1);
+    });
+
+    it("callable by owner only", async () => {
+      const contract = await WhailInvestorMock.new();
+
+      let failed = false;
+      try {
+        await contract.close({ from: participant }); // should be owner
+      } catch (e) {
+        failed = true;
+      }
+
+      assert.equal(failed, true);
+    });
+
+  });
+
+  describe('#cancel()', () => {
+
+    it("sets stage", async () => {
+      const contract = await WhailInvestorMock.new();
+      await contract.cancel({ from: owner });
+
+      const stage = await contract.stage.call();
+
+      assert.equal(stage.toNumber(), 2);
+    });
+
+    it("callable by owner only", async () => {
+      const contract = await WhailInvestorMock.new();
+
+      let failed = false;
+      try {
+        await contract.cancel({ from: participant }); // should be owner
+      } catch (e) {
+        failed = true;
+      }
+
+      assert.equal(failed, true);
+    });
+
+  });
+
 });
